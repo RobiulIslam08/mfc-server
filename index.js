@@ -155,6 +155,27 @@ async function run() {
   
       res.send({ message: 'Login successful', token, user: userInfo });
   });
+
+  // get all user data
+  app.get('/users', async(req,res) =>{
+    const result = await usersCollection.find().toArray()
+
+    res.send(result)
+  })
+
+  app.patch('/users/update/:email', async(req, res)=>{
+    const email = req.params.email;
+    const query = {email};
+    const user = req.body;
+    const updateDoc = {
+      $set: {
+        ...user, 
+        Timestamp: Date.now()
+      }
+    }
+    const result = await usersCollection.updateOne(query,updateDoc)
+    res.send(result)
+  })
   
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
